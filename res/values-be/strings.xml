@@ -20,7 +20,6 @@
     <string name="location_agps_access_summary">Калі месцазнаходжанне ўключана, <b>спампуйце даныя дапамогі спадарожнікаў з інтэрнэту</b>, якія могуць значна падвысіць хуткасць запуску GPS.</string>
     <string name="update_recovery_full_description"><xliff:g id="recovery_update_description">%1$s</xliff:g>\n<xliff:g id="recovery_update_warning">%2$s</xliff:g></string>
     <string name="services_os_nav_keys_label"><b>Выкарыстоўваць кнопкі навігацыі на экране</b> замест апаратных.</string>
-    <string name="services_full_description"><xliff:g id="pp_explanation">%1$s</xliff:g>\n<xliff:g id="pp_find">%2$s</xliff:g></string>
     <string name="setup_navigation">Навігацыя</string>
     <string name="gesture_navigation">Навігацыя жэстамі</string>
 </resources>
