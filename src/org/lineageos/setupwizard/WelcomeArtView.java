@@ -6,7 +6,6 @@ package org.lineageos.setupwizard;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -16,6 +15,8 @@ import android.graphics.Shader;
 import android.view.View;
 
 import java.util.Arrays;
+
+import org.arkui.animation.StartupAnimation;
 
 /** Resolution-independent welcome artwork, rendered without a video or per-frame bitmaps. */
 final class WelcomeArtView extends View {
@@ -40,7 +41,8 @@ final class WelcomeArtView extends View {
     private final float[] mRotationCos = new float[STRANDS];
     private final float[] mRotationSin = new float[STRANDS];
     private final int mSurface, mInk, mPrimary, mTertiary;
-    private RadialGradient mPrimaryGlow, mTertiaryGlow, mIntroGlow, mHaloGlow;
+    private final StartupAnimation mIntro;
+    private RadialGradient mPrimaryGlow, mTertiaryGlow, mHaloGlow;
     private LinearGradient mSpectrum;
     private float mCenterX, mCenterY, mRadius;
     private long mElapsed;
@@ -55,6 +57,7 @@ final class WelcomeArtView extends View {
         mInk = context.getColor(com.android.internal.R.color.materialColorOnSurface);
         mPrimary = context.getColor(com.android.internal.R.color.materialColorPrimary);
         mTertiary = context.getColor(com.android.internal.R.color.materialColorTertiary);
+        mIntro = new StartupAnimation(getResources().getDisplayMetrics().density, mPrimary);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         // The first letter follows the system's ArkUI wordmark, rather than another OS's symbol.
@@ -104,9 +107,6 @@ final class WelcomeArtView extends View {
                 alpha(mPrimary, 42), alpha(mPrimary, 0), Shader.TileMode.CLAMP);
         mTertiaryGlow = new RadialGradient(0, 0, width * .65f,
                 alpha(mTertiary, 32), alpha(mTertiary, 0), Shader.TileMode.CLAMP);
-        mIntroGlow = new RadialGradient(0, 0, width * .13f,
-                new int[]{Color.WHITE, alpha(mPrimary, 180), alpha(mPrimary, 0)},
-                new float[]{0, .24f, 1}, Shader.TileMode.CLAMP);
         mHaloGlow = new RadialGradient(0, 0, width * .33f,
                 new int[]{alpha(mPrimary, 0), alpha(mTertiary, 30), alpha(mPrimary, 150),
                         alpha(mTertiary, 50), alpha(mPrimary, 0)},
@@ -125,41 +125,9 @@ final class WelcomeArtView extends View {
         glow(canvas, mTertiaryGlow, getWidth() * .80f - drift, getHeight() * .25f, 1, 255);
         glow(canvas, mPrimaryGlow, getWidth() * .85f, getHeight() * 1.03f, .7f, 105);
         if (mElapsed < WelcomeLayout.MAIN_START && mAnimated) {
-            drawIntro(canvas);
+            mIntro.draw(canvas, getWidth(), getHeight(), mElapsed);
         } else {
             drawGeometry(canvas);
-        }
-    }
-
-    private void drawIntro(Canvas canvas) {
-        float reveal = WelcomeMotion.effect((mElapsed - 5000) / 800f);
-        mPaint.setShader(null);
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(alpha(Color.BLACK, Math.round(255 * (1 - reveal))));
-        canvas.drawRect(0, 0, getWidth(), getHeight(), mPaint);
-        if (mElapsed > 5800) return;
-        float cx = getWidth() * .5f;
-        float cy = getHeight() * .5f;
-        float dot = dp(15);
-        if (mElapsed > 4600) {
-            float scale = 1 + WelcomeMotion.entrance((mElapsed - 4600) / 1000f) * 5;
-            glow(canvas, mIntroGlow, cx, cy, scale, Math.round(255 * (1 - reveal)));
-        }
-        mPaint.setShader(null);
-        mPaint.setColor(alpha(Color.WHITE, Math.round(255 * (1 - reveal))));
-        if (mElapsed < 3000) {
-            float spread = dp(33) * pulse(mElapsed, 0, 2800);
-            float size = dot * (.35f + .65f * WelcomeMotion.entrance(mElapsed / 1000f));
-            canvas.drawCircle(cx - spread, cy, size, mPaint);
-            canvas.drawCircle(cx + spread, cy, size, mPaint);
-        } else {
-            float spread = dp(37) * pulse(mElapsed, 3000, 1700);
-            double rotation = (mElapsed - 3000) / 1900.0;
-            for (int i = 0; i < 4; i++) {
-                double angle = rotation + i * Math.PI / 2;
-                canvas.drawCircle(cx + spread * (float) Math.cos(angle),
-                        cy + spread * (float) Math.sin(angle), dot, mPaint);
-            }
         }
     }
 
