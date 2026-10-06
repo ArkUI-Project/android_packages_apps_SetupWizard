@@ -1,5 +1,6 @@
 //
 // SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-FileCopyrightText: 2026 The ArkUI Project
 // SPDX-License-Identifier: Apache-2.0
 //
 
@@ -22,6 +23,7 @@ android_app {
 
     static_libs: [
         "androidx.activity_activity",
+        "androidx.dynamicanimation_dynamicanimation",
         "SettingsLib",
         "setupcompat",
         "setupdesign",
@@ -30,4 +32,16 @@ android_app {
     ],
 
     libs: ["telephony-common"],
+}
+
+android_test {
+    name: "ArkSetupWizardTests",
+    srcs: ["tests/src/**/*.java"],
+    resource_dirs: [],
+    manifest: "tests/AndroidManifest.xml",
+    instrumentation_for: "LineageSetupWizard",
+    platform_apis: true,
+    certificate: "platform",
+    static_libs: ["androidx.test.runner", "androidx.test.ext.junit", "junit"],
+    test_suites: ["device-tests"],
 }

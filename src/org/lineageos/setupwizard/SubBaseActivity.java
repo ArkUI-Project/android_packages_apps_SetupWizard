@@ -69,7 +69,7 @@ public abstract class SubBaseActivity extends BaseSetupWizardActivity {
     protected void startSubactivity(Intent subactivityIntent) {
         Intent intent = getIntent();
         Bundle wizardBundle = intent.getBundleExtra(EXTRA_WIZARD_BUNDLE);
-        if (wizardBundle.containsKey(EXTRA_SCRIPT_URI)) {
+        if (wizardBundle != null && wizardBundle.containsKey(EXTRA_SCRIPT_URI)) {
             subactivityIntent.putExtra(EXTRA_WIZARD_BUNDLE, wizardBundle);
         }
         try {

@@ -51,6 +51,7 @@
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/Theme.Setup"
         android:uiOptions="none"
+        android:supportsRtl="true"
         android:taskAffinity="com.android.wizard"
         android:name=".SetupWizardApp">
 
@@ -103,6 +104,7 @@
 
         <activity
             android:name=".WelcomeActivity"
+            android:theme="@style/Theme.Setup.Welcome"
             android:label="@string/activity_label_empty"
             android:configChanges="mcc|mnc"
             android:immersive="true"

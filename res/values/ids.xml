@@ -7,4 +7,9 @@
     <item name="localepicker_input" type="id" />
     <item name="lp__increment" type="id" />
     <item name="lp__decrement" type="id" />
+    <item name="welcome_title" type="id" />
+    <item name="emerg_dialer" type="id" />
+    <item name="launch_accessibility" type="id" />
+    <item name="skip" type="id" />
+    <item name="skip_intro" type="id" />
 </resources>

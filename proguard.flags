@@ -14,3 +14,7 @@
 # Needed when building against the Marshmallow SDK
 -dontwarn org.apache.http.**
 -dontwarn androidx.**
+
+# Native welcome view inflation and on-device lifecycle tests share this class's API.
+-keep class org.lineageos.setupwizard.WelcomeLayout { *; }
+-keep class org.lineageos.setupwizard.WelcomeMotion { *; }
