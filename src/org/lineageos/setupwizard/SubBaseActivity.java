@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ArkUI Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -107,11 +108,28 @@ public abstract class SubBaseActivity extends BaseSetupWizardActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.setup_loading_page;
+        // Pure forwarding activities keep the previous page visible until Settings draws.
+        // Welcome and restore override this with their real, interactive layouts.
+        return -1;
     }
 
     @Override
     protected int getTitleResId() {
-        return R.string.loading;
+        return -1;
+    }
+
+    @Override
+    protected void applyForwardTransition() {
+        if (getLayoutResId() == -1) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0);
+            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0);
+        } else {
+            super.applyForwardTransition();
+        }
+    }
+
+    @Override
+    protected void applyBackwardTransition() {
+        if (getLayoutResId() != -1) super.applyBackwardTransition();
     }
 }

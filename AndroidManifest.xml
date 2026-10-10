@@ -2,6 +2,7 @@
 <!--
      SPDX-FileCopyrightText: 2013 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -91,6 +92,7 @@
 
         <activity
             android:name=".BluetoothSetupActivity"
+            android:theme="@style/Theme.Setup.Relay"
             android:label="@string/activity_label_empty"
             android:configChanges="mcc|mnc"
             android:immersive="true"
@@ -157,6 +159,7 @@
 
         <activity
             android:name=".NetworkSetupActivity"
+            android:theme="@style/Theme.Setup.Relay"
             android:label="@string/activity_label_empty"
             android:configChanges="mcc|mnc"
             android:immersive="true"
@@ -196,6 +199,7 @@
 
         <activity
             android:name=".DeviceSpecificActivity"
+            android:theme="@style/Theme.Setup.Relay"
             android:label="@string/activity_label_empty"
             android:immersive="true"
             android:exported="true"
@@ -234,6 +238,7 @@
 
         <activity
             android:name=".BiometricActivity"
+            android:theme="@style/Theme.Setup.Relay"
             android:label="@string/activity_label_empty"
             android:configChanges="mcc|mnc"
             android:immersive="true"
@@ -247,6 +252,7 @@
 
         <activity
             android:name=".ScreenLockActivity"
+            android:theme="@style/Theme.Setup.Relay"
             android:label="@string/activity_label_empty"
             android:configChanges="mcc|mnc"
             android:immersive="true"

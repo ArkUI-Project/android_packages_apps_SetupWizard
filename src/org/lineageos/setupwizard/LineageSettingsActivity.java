@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2016 The CyanogenMod Project
  * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ArkUI Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -87,7 +88,7 @@ public class LineageSettingsActivity extends BaseSetupWizardActivity {
         }
     }
 
-    private static boolean isKeyDisablerSupported(Context context) {
+    public static boolean isKeyDisablerSupported(Context context) {
         final LineageHardwareManager hardware = LineageHardwareManager.getInstance(context);
         return hardware.isSupported(LineageHardwareManager.FEATURE_KEY_DISABLE);
     }

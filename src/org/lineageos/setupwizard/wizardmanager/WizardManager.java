@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2016 The CyanogenMod Project
  * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ArkUI Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -17,6 +18,7 @@ import static org.lineageos.setupwizard.SetupWizardApp.LOGV;
 
 import android.annotation.Nullable;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +27,9 @@ import android.util.Log;
 
 import com.google.android.setupcompat.util.ResultCodes;
 
+import org.lineageos.setupwizard.DeviceSpecificActivity;
+import org.lineageos.setupwizard.LineageSettingsActivity;
+import org.lineageos.setupwizard.ScreenLockActivity;
 import org.lineageos.setupwizard.util.SetupWizardUtils;
 
 import java.util.HashMap;
@@ -89,7 +94,12 @@ public class WizardManager extends Activity {
         wizardBundle.putString(EXTRA_ACTION_ID, action.getId());
         intent.putExtra(EXTRA_WIZARD_BUNDLE, wizardBundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-        startActivity(intent);
+        if (isRelayAction(intent)) {
+            // Relays only forward to Settings; animate the actual destination once it is ready.
+            startActivity(intent, ActivityOptions.makeCustomAnimation(this, 0, 0).toBundle());
+        } else {
+            startActivity(intent);
+        }
     }
 
     private void load(String scriptUri, Intent extras) {
@@ -168,7 +178,42 @@ public class WizardManager extends Activity {
     }
 
     private static boolean isActionAvailable(Context context, WizardAction action) {
-        return isIntentAvailable(context, action.getIntent());
+        Intent intent = action.getIntent();
+        if (intent == null) return false;
+        String name = intent.getAction();
+        if ("org.lineageos.setupwizard.DEVICE_SPECIFIC".equals(name)
+                && !isIntentAvailable(context,
+                        new Intent(DeviceSpecificActivity.ACTION_SETUP_DEVICE))) {
+            return false;
+        }
+        if ("org.lineageos.setupwizard.LINEAGE_RECOVERY_UPDATE".equals(name)
+                && !SetupWizardUtils.hasRecoveryUpdater(context)) {
+            return false;
+        }
+        if ("org.lineageos.setupwizard.LINEAGE_SETTINGS".equals(name)
+                && !LineageSettingsActivity.isKeyDisablerSupported(context)) {
+            return false;
+        }
+        if ("org.lineageos.setupwizard.LINEAGE_BIOMETRIC_SETTINGS".equals(name)
+                && !SetupWizardUtils.hasBiometric(context)) {
+            // The biometric page normally enables this fallback before skipping itself.
+            SetupWizardUtils.enableComponent(context, ScreenLockActivity.class);
+            return false;
+        }
+        return isIntentAvailable(context, intent);
+    }
+
+    private static boolean isRelayAction(Intent intent) {
+        String action = intent.getAction();
+        if (action == null) return false;
+        return switch (action) {
+            case "org.lineageos.setupwizard.LINEAGE_BLUETOOTH_SETUP",
+                    "org.lineageos.setupwizard.LINEAGE_NETWORK_SETUP",
+                    "org.lineageos.setupwizard.DEVICE_SPECIFIC",
+                    "org.lineageos.setupwizard.LINEAGE_BIOMETRIC_SETTINGS",
+                    "org.lineageos.setupwizard.LINEAGE_LOCKSCREEN_SETTINGS" -> true;
+            default -> false;
+        };
     }
 
     private static boolean isIntentAvailable(Context context, Intent intent) {
