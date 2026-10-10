@@ -2,6 +2,7 @@
 <!--
      SPDX-FileCopyrightText: 2013 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <com.google.android.setupdesign.GlifLayout
@@ -36,17 +37,16 @@
                         android:id="@+id/timezone_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
+                        style="@style/ArkuiSetupOption"
                         android:saveEnabled="false" />
 
                     <TwoLineListItem
                         android:id="@+id/date_item"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
+                        style="@style/ArkuiSetupOption"
                         android:mode="twoLine"
                         android:clickable="true"
-                        android:background="?android:attr/selectableItemBackground"
                         android:gravity="center_vertical">
 
                         <TextView
@@ -70,10 +70,9 @@
                         android:id="@+id/time_item"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
+                        style="@style/ArkuiSetupOption"
                         android:mode="twoLine"
                         android:clickable="true"
-                        android:background="?android:attr/selectableItemBackground"
                         android:gravity="center_vertical">
 
                         <TextView

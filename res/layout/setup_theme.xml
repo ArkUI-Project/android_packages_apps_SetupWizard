@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <com.google.android.setupdesign.GlifLayout
@@ -35,12 +36,12 @@
                     <RadioButton
                         android:id="@+id/radio_dark"
                         android:text="@string/dark"
-                        style="@style/SudRadioButton" />
+                        style="@style/ArkuiSetupRadio" />
 
                     <RadioButton
                         android:id="@+id/radio_light"
                         android:text="@string/light"
-                        style="@style/SudRadioButton" />
+                        style="@style/ArkuiSetupRadio" />
 
                 </RadioGroup>
             </ScrollView>

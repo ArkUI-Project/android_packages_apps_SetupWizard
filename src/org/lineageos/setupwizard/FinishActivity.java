@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2016 The CyanogenMod Project
  * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ArkUI Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -11,6 +12,7 @@ import static org.lineageos.setupwizard.SetupWizardApp.LOGV;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.pm.ActivityInfo;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
+import android.widget.ImageView;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -62,6 +65,12 @@ public class FinishActivity extends BaseSetupWizardActivity {
             logActivityState("onCreate savedInstanceState=" + savedInstanceState);
         }
         setNextText(R.string.start);
+        getGlifLayout().setDescriptionText(R.string.setup_complete_summary);
+        ImageView logo = findViewById(R.id.brand_logo);
+        logo.setImageTintList(ColorStateList.valueOf(
+                getColor(com.android.internal.R.color.materialColorOnPrimaryContainer)));
+        logo.setBackground(new ArkuiRibbonDrawable(this,
+                28 * getResources().getDisplayMetrics().density));
 
         // Edge-to-edge. Needed for the background view to fill the full screen.
         final Window window = getWindow();
@@ -131,6 +140,16 @@ public class FinishActivity extends BaseSetupWizardActivity {
     @Override
     protected int getLayoutResId() {
         return R.layout.finish_activity;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.setup_complete_title;
+    }
+
+    @Override
+    protected int getIconResId() {
+        return R.drawable.ic_setup_complete;
     }
 
     @Override

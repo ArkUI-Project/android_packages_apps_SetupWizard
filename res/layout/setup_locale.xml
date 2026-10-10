@@ -2,6 +2,7 @@
 <!--
      SPDX-FileCopyrightText: 2013 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <com.google.android.setupdesign.GlifLayout
@@ -20,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="top">
 
             <org.lineageos.setupwizard.widget.LocalePicker
                 android:id="@+id/locale_list"
@@ -28,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 style="@style/LocaleWidget.Material.LocalePicker" />
 

@@ -2,6 +2,7 @@
 <!--
      SPDX-FileCopyrightText: 2015 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <com.google.android.setupdesign.GlifLayout
@@ -31,11 +32,11 @@
             android:layout_weight="1"
             style="@style/SudContentFrame" />
 
-        <com.google.android.setupdesign.view.NavigationBar
+        <org.lineageos.setupwizard.NavigationLayout
             android:id="@+id/navigation_bar"
-            style="@style/SudNavBarTheme"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sud_navbar_height" />
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
 
     </LinearLayout>
 </com.google.android.setupdesign.GlifLayout>

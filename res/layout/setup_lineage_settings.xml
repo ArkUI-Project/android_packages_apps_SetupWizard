@@ -2,6 +2,7 @@
 <!--
      SPDX-FileCopyrightText: 2015 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <com.google.android.setupdesign.GlifLayout
@@ -39,9 +40,8 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/location_margin_left"
-                        android:paddingRight="@dimen/content_margin_right"
-                        android:background="?android:attr/selectableItemBackground"
+                        style="@style/ArkuiSetupOption"
+                        android:gravity="center_vertical"
                         android:clickable="true">
 
                         <CheckBox
@@ -51,14 +51,15 @@
                             android:layout_gravity="top"
                             android:duplicateParentState="true"
                             android:clickable="false"
-                            style="@style/SudCheckBox.Multiline" />
+                            style="@style/ArkuiSetupCheckBox" />
 
                         <TextView
                             android:id="@+id/nav_keys_summary"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:text="@string/services_os_nav_keys_label"
-                            style="@style/SudCheckBox.Multiline" />
+                            style="@style/ArkuiSetupOptionText" />
 
                     </LinearLayout>
                 </LinearLayout>

@@ -2,6 +2,7 @@
 <!--
      SPDX-FileCopyrightText: 2016 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <android.widget.FrameLayout
@@ -11,7 +12,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     app:insetForeground="@android:color/transparent">
 
     <ImageView
@@ -21,30 +21,50 @@
         android:background="@drawable/background"
         android:visibility="visible"/>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        style="@style/SudContentFrame">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/brand_logo"
+        <com.google.android.setupdesign.GlifLayout
+            android:id="@+id/setup_wizard_layout"
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:src="@drawable/arkui_logo"
-            android:tint="?android:attr/textColorPrimary"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:gravity="center"
-            android:padding="@dimen/content_margin_left"/>
+            android:layout_height="match_parent">
 
-        <org.lineageos.setupwizard.NavigationLayout
-            android:id="@+id/navigation_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                style="@style/SudContentFrame">
 
-    </LinearLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/brand_logo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="220dp"
+                        android:src="@drawable/arkui_logo"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:padding="48dp" />
+
+                </FrameLayout>
+
+                <org.lineageos.setupwizard.NavigationLayout
+                    android:id="@+id/navigation_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </com.google.android.setupdesign.GlifLayout>
+
+    </FrameLayout>
 
 </android.widget.FrameLayout>
