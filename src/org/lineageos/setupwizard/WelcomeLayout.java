@@ -7,11 +7,9 @@ package org.lineageos.setupwizard;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Insets;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Choreographer;
@@ -25,15 +23,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/** A single persistent welcome scene: intro, type, artwork and actions share one timeline. */
+/** A single welcome scene: glass ribbons, wordmark and actions share one timeline. */
 public final class WelcomeLayout extends ViewGroup implements Choreographer.FrameCallback {
-    static final long MAIN_START = 13000;
-    private static final long GREETING_LENGTH = 4700;
+    static final long MAIN_START = 1800;
     private final WelcomeArtView mArt;
-    private final TextView mIntro, mTagline, mGreeting;
+    private final TextView mTagline, mGreeting;
     private final ImageView mLogo;
     private final Button mNext, mSkipIntro;
     private final Button[] mUtilities;
@@ -43,12 +37,10 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
     private final ValueAnimator.DurationScaleChangeListener mDurationListener =
             this::onDurationScaleChanged;
     private final int mInk, mUtilitySurface;
-    private final String mIntroText, mTaglineText;
-    private final List<String> mGreetings = new ArrayList<>();
+    private final String mTaglineText;
     private CharSequence mWelcomeMessage;
     private long mElapsed, mLastFrameNanos;
     private double mFractionalMillis;
-    private int mPhase = -1;
     private int mBarAppearance = -1;
     private boolean mResumed, mRunning, mMotionEnabled = true, mManaged;
 
@@ -56,28 +48,17 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         super(context, attrs);
         setClipChildren(false);
         setClipToPadding(false);
-        mInk = context.getColor(com.android.internal.R.color.materialColorOnSurface);
-        mUtilitySurface = context.getColor(
-                com.android.internal.R.color.materialColorSurfaceContainer);
+        mInk = context.getColor(com.android.internal.R.color.materialColorOnPrimaryContainer);
+        mUtilitySurface = (context.getColor(
+                com.android.internal.R.color.materialColorSurface) & 0x00ffffff) | 0xcc000000;
         mAccessibility = context.getSystemService(AccessibilityManager.class);
-        mIntroText = context.getString(R.string.welcome_intro);
         mTaglineText = context.getString(R.string.welcome_tagline);
         mWelcomeMessage = context.getString(R.string.setup_welcome_message,
                 context.getString(R.string.os_name));
-        mGreetings.add(context.getString(R.string.welcome_hello));
-        for (String greeting : new String[]{"你好", "Hello", "Bonjour", "Hola", "안녕하세요",
-                "こんにちは", "Hallo"}) {
-            if (!mGreetings.contains(greeting)) mGreetings.add(greeting);
-        }
-
         mArt = new WelcomeArtView(context);
         addView(mArt);
-        mIntro = text(32, Gravity.START);
-        mIntro.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        addView(mIntro);
-        mTagline = text(32, Gravity.START);
-        mTagline.setTextColor(context.getColor(com.android.internal.R.color.materialColorPrimary));
-        mTagline.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mTagline = text(18, Gravity.CENTER);
+        mTagline.setTypeface(Typeface.create(Typeface.DEFAULT, 400, false));
         addView(mTagline);
         mLogo = new ImageView(context);
         mLogo.setId(R.id.brand_logo);
@@ -91,13 +72,21 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         mGreeting.setAccessibilityHeading(true);
         mGreeting.setContentDescription(mWelcomeMessage);
         addView(mGreeting);
-        mNext = new ArrowButton(context);
+        mNext = new Button(context, null, 0);
         mNext.setId(R.id.start);
+        mNext.setText(R.string.start);
+        mNext.setTextSize(16);
+        mNext.setAllCaps(false);
+        mNext.setMinWidth(0);
+        mNext.setMinimumWidth(0);
+        mNext.setMinHeight(dp(56));
+        mNext.setMaxLines(2);
         mNext.setContentDescription(context.getString(R.string.start));
-        int container = context.getColor(com.android.internal.R.color.materialColorPrimaryContainer);
-        int onContainer = context.getColor(
-                com.android.internal.R.color.materialColorOnPrimaryContainer);
-        mNext.setBackground(new WelcomeButtonDrawable(container, onContainer, dp(28)));
+        int primary = context.getColor(com.android.internal.R.color.materialColorPrimary);
+        int onPrimary = context.getColor(com.android.internal.R.color.materialColorOnPrimary);
+        mNext.setTextColor(onPrimary);
+        mNext.setPadding(dp(24), 0, dp(24), 0);
+        mNext.setBackground(new WelcomeButtonDrawable(primary, onPrimary, dp(28)));
         mNext.setStateListAnimator(null);
         addView(mNext);
         mSkipIntro = utility(R.id.skip_intro, R.string.welcome_skip_animation);
@@ -230,55 +219,24 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
     }
 
     private void render() {
-        int phase = mElapsed < 6000 ? 0 : mElapsed < 9500 ? 1
-                : mElapsed < MAIN_START ? 2 : 3;
-        if (phase != mPhase) {
-            mPhase = phase;
-            mIntro.setVisibility(phase == 1 ? VISIBLE : INVISIBLE);
-            mTagline.setVisibility(phase == 2 ? VISIBLE : INVISIBLE);
-            mLogo.setVisibility(phase >= 2 ? VISIBLE : INVISIBLE);
-            mGreeting.setVisibility(phase == 3 ? VISIBLE : INVISIBLE);
-            mNext.setVisibility(phase == 3 ? VISIBLE : INVISIBLE);
-            mSkipIntro.setVisibility(phase == 3 ? GONE : VISIBLE);
-            requestLayout();
-        }
-        float background = WelcomeMotion.effect((mElapsed - 5000) / 800f);
-        int utilityInk = blend(Color.WHITE, mInk, background);
-        int utilityFill = blend(0x22ffffff, mUtilitySurface, background);
-        for (Button button : mUtilities) updateUtility(button, utilityFill, utilityInk);
-        updateUtility(mSkipIntro, utilityFill, utilityInk);
-        updateSystemBarAppearance(background);
-        if (phase == 1) {
-            typed(mIntro, mIntroText, mElapsed - 6200, 160);
-            mIntro.setAlpha(1 - WelcomeMotion.effect((mElapsed - 9250) / 250f));
-        } else if (phase == 2) {
-            float opacity = 1 - WelcomeMotion.effect((mElapsed - 12650) / 350f);
-            mLogo.setAlpha(WelcomeMotion.effect((mElapsed - 9500) / 300f) * opacity);
-            typed(mTagline, mTaglineText, mElapsed - 10200, 160);
-            mTagline.setAlpha(opacity);
-        } else if (phase == 3) {
-            float enter = mMotionEnabled
-                    ? WelcomeMotion.effect((mElapsed - MAIN_START) / 380f) : 1;
-            float spatial = mMotionEnabled
-                    ? WelcomeMotion.entrance((mElapsed - MAIN_START) / 1000f) : 1;
-            mLogo.setAlpha(enter * .65f);
-            mNext.setAlpha(enter);
-            mNext.setTranslationY(dp(16) * (1 - spatial));
-            mNext.setScaleX(.94f + .06f * spatial);
-            mNext.setScaleY(.94f + .06f * spatial);
-            mGreeting.setAlpha(enter);
-            if (mManaged) setText(mGreeting, mWelcomeMessage);
-            else if (!mMotionEnabled) setText(mGreeting, mGreetings.get(0));
-            else {
-                long cycle = mElapsed - MAIN_START;
-                String greeting = mGreetings.get((int) (cycle / GREETING_LENGTH
-                        % mGreetings.size()));
-                long local = cycle % GREETING_LENGTH;
-                typed(mGreeting, greeting, local - 120, 90);
-                mGreeting.setAlpha(enter * (1 - WelcomeMotion.effect(
-                        (local - GREETING_LENGTH + 180) / 180f)));
-            }
-        }
+        mSkipIntro.setVisibility(mMotionEnabled && mElapsed < MAIN_START ? VISIBLE : GONE);
+        for (Button button : mUtilities) updateUtility(button, mUtilitySurface, mInk);
+        updateUtility(mSkipIntro, mUtilitySurface, mInk);
+        updateSystemBarAppearance();
+        float logo = mMotionEnabled ? WelcomeMotion.effect(mElapsed / 1000f) : 1;
+        float title = mMotionEnabled ? WelcomeMotion.effect((mElapsed - 180) / 850f) : 1;
+        float subtitle = mMotionEnabled ? WelcomeMotion.effect((mElapsed - 350) / 850f) : 1;
+        mLogo.setAlpha(logo);
+        mLogo.setTranslationY(dp(20) * (1 - logo));
+        mLogo.setScaleX(.94f + .06f * logo);
+        mLogo.setScaleY(.94f + .06f * logo);
+        setText(mGreeting, mWelcomeMessage);
+        mGreeting.setAlpha(title);
+        mGreeting.setTranslationY(dp(16) * (1 - title));
+        setText(mTagline, mManaged ? "" : mTaglineText);
+        mTagline.setAlpha(subtitle);
+        // Start is usable immediately; the introduction never gates setup navigation.
+        mNext.setAlpha(1);
         mArt.setFrame(mElapsed, mMotionEnabled);
     }
 
@@ -287,25 +245,16 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         ((WelcomeButtonDrawable) button.getBackground()).setColors(fill, ink);
     }
 
-    private void updateSystemBarAppearance(float reveal) {
+    private void updateSystemBarAppearance() {
         WindowInsetsController controller = getWindowInsetsController();
         if (controller == null) return;
         int mask = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
                 | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
-        int appearance = reveal > .5f && Color.luminance(mInk) < .5f ? mask : 0;
+        int appearance = Color.luminance(mInk) < .5f ? mask : 0;
         if (mBarAppearance != appearance) {
             controller.setSystemBarsAppearance(appearance, mask);
             mBarAppearance = appearance;
         }
-    }
-
-    private void typed(TextView view, String text, long elapsed, int interval) {
-        int count = text.codePointCount(0, text.length());
-        int visible = (int) Math.max(0, Math.min(count, elapsed / interval));
-        String result = text.substring(0, text.offsetByCodePoints(0, visible));
-        boolean cursor = elapsed >= 0 && elapsed < count * interval + 700
-                && elapsed % 700 < 420;
-        setText(view, cursor ? result + "\u2009|" : result);
     }
 
     private static void setText(TextView view, CharSequence text) {
@@ -352,15 +301,21 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
                 MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
         boolean landscape = width - getPaddingLeft() - getPaddingRight()
                 > height - getPaddingTop() - getPaddingBottom();
-        int contentWidth = Math.min(dp(600), width - getPaddingLeft() - getPaddingRight() - dp(48));
-        measureText(mIntro, contentWidth);
-        measureText(mTagline, contentWidth);
-        measureText(mGreeting, landscape ? Math.min(contentWidth, width / 2 - dp(32)) : contentWidth);
-        int logoWidth = dp(mPhase == 2 ? 144 : 80);
+        int contentWidth = Math.max(0,
+                Math.min(dp(600), width - getPaddingLeft() - getPaddingRight() - dp(48)));
+        int textWidth = landscape ? Math.min(contentWidth, width / 2 - dp(32)) : contentWidth;
+        measureText(mTagline, textWidth);
+        measureText(mGreeting, textWidth);
+        int logoWidth = Math.min(dp(168), contentWidth);
         mLogo.measure(MeasureSpec.makeMeasureSpec(logoWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(logoWidth * 82 / 250, MeasureSpec.EXACTLY));
-        mNext.measure(MeasureSpec.makeMeasureSpec(dp(136), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(dp(56), MeasureSpec.EXACTLY));
+        mNext.measure(MeasureSpec.makeMeasureSpec(Math.max(0, textWidth), MeasureSpec.AT_MOST),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        mNext.measure(MeasureSpec.makeMeasureSpec(
+                        Math.min(Math.max(0, textWidth), Math.max(dp(136), mNext.getMeasuredWidth())),
+                        MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(Math.max(dp(56), mNext.getMeasuredHeight()),
+                        MeasureSpec.EXACTLY));
         measureText(mSkipIntro, Math.min(contentWidth, dp(224)));
         int count = 0;
         for (Button button : mUtilities) if (button.getVisibility() != GONE) count++;
@@ -392,8 +347,6 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         int safeHeight = height - getPaddingTop() - getPaddingBottom();
         boolean landscape = safeWidth > safeHeight;
         float cx = getPaddingLeft() + safeWidth * .5f;
-        float contentLeft = getPaddingLeft() + (safeWidth - mIntro.getMeasuredWidth()) * .5f;
-        float introY = getPaddingTop() + safeHeight * .145f;
         int footerHeight = 0, count = 0;
         for (Button button : mUtilities) {
             if (button.getVisibility() == GONE) continue;
@@ -412,26 +365,24 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
             place(button, utilityX, utilityY);
             utilityX += rtl ? -utilityStep : utilityStep;
         }
-        place(mIntro, contentLeft, introY);
-        place(mTagline, contentLeft, introY + mLogo.getMeasuredHeight() + dp(16));
-        if (mPhase == 2) place(mLogo, rtl
-                ? contentLeft + mIntro.getMeasuredWidth() - mLogo.getMeasuredWidth()
-                : contentLeft, introY);
-        else center(mLogo, cx, getPaddingTop() + dp(32));
-
         float actionX = landscape ? getPaddingLeft() + safeWidth * .74f : cx;
         float nextY = Math.min(getPaddingTop() + safeHeight * (landscape ? .65f : .81f),
                 utilityY - dp(24) - mNext.getMeasuredHeight() / 2f);
-        float greetingY = Math.min(getPaddingTop() + safeHeight * (landscape ? .35f : .655f),
+        float greetingY = Math.min(getPaddingTop() + safeHeight * (landscape ? .3f : .48f),
                 nextY - mNext.getMeasuredHeight() / 2f - dp(28)
+                        - mTagline.getMeasuredHeight() - dp(16)
                         - mGreeting.getMeasuredHeight() / 2f);
         center(mGreeting, actionX, greetingY);
+        center(mTagline, actionX, greetingY + mGreeting.getMeasuredHeight() / 2f
+                + dp(16) + mTagline.getMeasuredHeight() / 2f);
         center(mNext, actionX, nextY);
-        center(mSkipIntro, cx, nextY);
-        float artX = landscape ? getPaddingLeft() + safeWidth * .27f : cx;
-        float artY = getPaddingTop() + safeHeight * (landscape ? .43f : .34f);
-        float radius = Math.min(safeWidth * (landscape ? .15f : .42f), safeHeight * .22f);
-        mArt.setScene(artX, artY, radius);
+        center(mSkipIntro, cx, getPaddingTop() + mSkipIntro.getMeasuredHeight() / 2f + dp(16));
+        float logoX = landscape ? getPaddingLeft() + safeWidth * .27f : cx;
+        float logoY = landscape ? getPaddingTop() + safeHeight * .42f
+                : Math.min(getPaddingTop() + safeHeight * .28f,
+                        greetingY - mGreeting.getMeasuredHeight() / 2f - dp(32)
+                                - mLogo.getMeasuredHeight() / 2f);
+        center(mLogo, logoX, logoY);
     }
 
     private void center(View view, float x, float y) {
@@ -447,34 +398,4 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
-    private static int blend(int from, int to, float amount) {
-        return Color.argb(Math.round(Color.alpha(from) + (Color.alpha(to) - Color.alpha(from)) * amount),
-                Math.round(Color.red(from) + (Color.red(to) - Color.red(from)) * amount),
-                Math.round(Color.green(from) + (Color.green(to) - Color.green(from)) * amount),
-                Math.round(Color.blue(from) + (Color.blue(to) - Color.blue(from)) * amount));
-    }
-
-    private static final class ArrowButton extends Button {
-        private final Drawable mArrow;
-
-        ArrowButton(Context context) {
-            super(context, null, 0);
-            setMinWidth(0);
-            setMinHeight(0);
-            setMinimumWidth(0);
-            setMinimumHeight(0);
-            mArrow = context.getDrawable(R.drawable.ic_welcome_next).mutate();
-            mArrow.setTint(context.getColor(com.android.internal.R.color.materialColorOnPrimaryContainer));
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            int size = Math.round(24 * getResources().getDisplayMetrics().density);
-            int left = (getWidth() - size) / 2, top = (getHeight() - size) / 2;
-            mArrow.setLayoutDirection(getLayoutDirection());
-            mArrow.setBounds(left, top, left + size, top + size);
-            mArrow.draw(canvas);
-        }
-    }
 }

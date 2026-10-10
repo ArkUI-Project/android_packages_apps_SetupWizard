@@ -192,12 +192,13 @@ public final class WelcomeLayoutTest {
             scene().restoreElapsed(0);
             WindowInsetsController controller = mActivity.getWindow().getInsetsController();
             int light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
-            assertEquals(0, controller.getSystemBarsAppearance() & light);
+            int ink = mActivity.getColor(
+                    com.android.internal.R.color.materialColorOnPrimaryContainer);
+            int expected = Color.luminance(ink) < .5f ? light : 0;
+            assertEquals(expected, controller.getSystemBarsAppearance() & light);
             assertEquals(Color.TRANSPARENT, mActivity.getWindow().getStatusBarColor());
             scene().restoreElapsed(6500);
-            int surface = mActivity.getColor(com.android.internal.R.color.materialColorSurface);
-            assertEquals(Color.luminance(surface) > .5f ? light : 0,
-                    controller.getSystemBarsAppearance() & light);
+            assertEquals(expected, controller.getSystemBarsAppearance() & light);
         });
     }
 
