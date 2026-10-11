@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Choreographer;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -72,23 +73,8 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         mGreeting.setAccessibilityHeading(true);
         mGreeting.setContentDescription(mWelcomeMessage);
         addView(mGreeting);
-        mNext = new Button(context, null, 0);
-        mNext.setId(R.id.start);
-        mNext.setText(R.string.start);
-        mNext.setTextSize(16);
-        mNext.setAllCaps(false);
-        mNext.setGravity(Gravity.CENTER);
-        mNext.setMinWidth(0);
-        mNext.setMinimumWidth(0);
-        mNext.setMinHeight(dp(56));
-        mNext.setMaxLines(2);
-        mNext.setContentDescription(context.getString(R.string.start));
-        int primary = context.getColor(com.android.internal.R.color.materialColorPrimary);
-        int onPrimary = context.getColor(com.android.internal.R.color.materialColorOnPrimary);
-        mNext.setTextColor(onPrimary);
-        mNext.setPadding(dp(24), 0, dp(24), 0);
-        mNext.setBackground(new WelcomeButtonDrawable(primary, onPrimary, dp(28)));
-        mNext.setStateListAnimator(null);
+        mNext = (Button) LayoutInflater.from(context)
+                .inflate(R.layout.welcome_start_button, this, false);
         addView(mNext);
         mSkipIntro = utility(R.id.skip_intro, R.string.welcome_skip_animation);
         mSkipIntro.setOnClickListener(view -> skipIntro());
@@ -312,11 +298,6 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
                 MeasureSpec.makeMeasureSpec(logoWidth * 82 / 250, MeasureSpec.EXACTLY));
         mNext.measure(MeasureSpec.makeMeasureSpec(Math.max(0, textWidth), MeasureSpec.AT_MOST),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        mNext.measure(MeasureSpec.makeMeasureSpec(
-                        Math.min(Math.max(0, textWidth), Math.max(dp(136), mNext.getMeasuredWidth())),
-                        MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(Math.max(dp(56), mNext.getMeasuredHeight()),
-                        MeasureSpec.EXACTLY));
         measureText(mSkipIntro, Math.min(contentWidth, dp(224)));
         int count = 0;
         for (Button button : mUtilities) if (button.getVisibility() != GONE) count++;
