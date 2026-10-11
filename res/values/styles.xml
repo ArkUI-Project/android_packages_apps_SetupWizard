@@ -6,18 +6,18 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources xmlns:androidprv="http://schemas.android.com/apk/prv/res/android">
-    <style name="Theme.Setup" parent="@style/SudThemeGlifV4.DayNight">
+    <style name="Theme.Setup" parent="@style/SudThemeGlifExpressive.DayNight">
         <item name="sucUsePartnerResource">true</item>
         <item name="sudUsePartnerHeavyTheme">true</item>
         <item name="sucFullDynamicColor">true</item>
         <item name="colorAccent">@androidprv:color/materialColorPrimary</item>
         <item name="android:colorAccent">?attr/colorAccent</item>
-        <item name="android:windowBackground">@androidprv:color/materialColorSurface</item>
-        <item name="android:colorBackground">@androidprv:color/materialColorSurface</item>
-        <item name="android:navigationBarColor">@androidprv:color/materialColorSurface</item>
+        <item name="android:windowBackground">@color/settingslib_materialColorSurfaceContainer</item>
+        <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
+        <item name="android:navigationBarColor">@color/settingslib_materialColorSurfaceContainer</item>
         <item name="android:textColorPrimary">@androidprv:color/materialColorOnSurface</item>
         <item name="android:textColorSecondary">@androidprv:color/materialColorOnSurfaceVariant</item>
-        <item name="sudBackgroundBaseColor">@androidprv:color/materialColorSurface</item>
+        <item name="sudBackgroundBaseColor">@color/settingslib_materialColorSurfaceContainer</item>
         <item name="sudBackgroundPatterned">false</item>
         <item name="sudGlifHeaderTitleStyle">@style/ArkuiSetupTitle</item>
         <item name="sudGlifDescriptionStyle">@style/ArkuiSetupDescription</item>
@@ -27,6 +27,14 @@
         <item name="sudContentFramePaddingBottom">16dp</item>
         <item name="sudButtonCornerRadius">28dp</item>
         <item name="sucFooterBarButtonMinHeight">56dp</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.SettingsLib.Expressive</item>
+        <item name="expressiveSwitchStyle">@style/SettingslibSwitchStyle.Expressive</item>
+        <item name="android:textAppearanceListItem">@style/TextAppearance.SettingsLib.PreferenceTitle</item>
+        <item name="android:textAppearanceListItemSecondary">@style/TextAppearance.SettingsLib.PreferenceSummary</item>
+        <item name="android:listPreferredItemPaddingStart">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:listPreferredItemPaddingEnd">@dimen/settingslib_expressive_space_small1</item>
+        <item name="alertDialogTheme">@style/Theme.AlertDialog.SettingsLib.Expressive</item>
+        <item name="android:alertDialogTheme">@style/Theme.DeviceDefault.AlertDialog.SettingsLib.Expressive</item>
     </style>
 
     <style name="Theme.Setup.Welcome" parent="Theme.Setup">
@@ -49,68 +57,15 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    <style name="SpinnerItem">
-        <item name="android:textSize">16sp</item>
-        <item name="android:paddingStart">0dp</item>
-        <item name="android:paddingEnd">0dp</item>
-    </style>
-
-    <style name="ArkuiSetupTitle" parent="SudGlifHeaderTitleMaterialYou">
+    <style name="ArkuiSetupTitle" parent="SudGlifHeaderTitleExpressive">
         <item name="android:textSize">32sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="ArkuiSetupDescription" parent="SudGlifDescriptionMaterialYou">
+    <style name="ArkuiSetupDescription" parent="SudGlifDescriptionExpressive">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
-    </style>
-
-    <style name="ArkuiSetupOption" parent="">
-        <item name="android:background">@drawable/arkui_setup_card</item>
-        <item name="android:minHeight">64dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-    </style>
-
-    <style name="ArkuiSetupRadio" parent="SudRadioButton">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">0dp</item>
-        <item name="android:layout_marginLeft">0dp</item>
-        <item name="android:layout_marginTop">0dp</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:background">@drawable/arkui_setup_card</item>
-        <item name="android:minHeight">64dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-    </style>
-
-    <style name="ArkuiSetupCheckBox" parent="SudCheckBox.Multiline">
-        <item name="android:layout_marginStart">0dp</item>
-        <item name="android:layout_marginLeft">0dp</item>
-        <item name="android:layout_marginTop">0dp</item>
-        <item name="android:layout_marginBottom">0dp</item>
-        <item name="android:paddingStart">0dp</item>
-        <item name="android:paddingEnd">12dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-    </style>
-
-    <style name="ArkuiSetupOptionText" parent="SudCheckBox.Multiline">
-        <item name="android:layout_marginStart">0dp</item>
-        <item name="android:layout_marginLeft">0dp</item>
-        <item name="android:layout_marginTop">0dp</item>
-        <item name="android:layout_marginBottom">0dp</item>
-        <item name="android:paddingStart">0dp</item>
-        <item name="android:paddingEnd">0dp</item>
-        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="LocaleWidget">

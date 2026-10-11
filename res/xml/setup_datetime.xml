@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        android:key="timezone"
+        android:title="@string/setup_time_zone"
+        android:persistent="false"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="date"
+        android:title="@string/setup_current_date"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="time"
+        android:title="@string/setup_current_time"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

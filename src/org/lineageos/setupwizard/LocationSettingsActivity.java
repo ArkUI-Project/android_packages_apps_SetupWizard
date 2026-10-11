@@ -13,18 +13,17 @@ import android.os.Process;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.settingslib.utils.ThreadUtils;
 
 public class LocationSettingsActivity extends BaseSetupWizardActivity {
 
-    private CheckBox mLocationAccess;
-    private CheckBox mLocationAgpsAccess;
+    private SwitchPreferenceCompat mLocationAccess;
+    private SwitchPreferenceCompat mLocationAgpsAccess;
 
     private LocationManager mLocationManager;
 
@@ -36,20 +35,11 @@ public class LocationSettingsActivity extends BaseSetupWizardActivity {
         super.onCreate(savedInstanceState);
         setNextText(R.string.next);
 
-        mLocationAccess = findViewById(R.id.location_checkbox);
-        mLocationAgpsAccess = findViewById(R.id.location_agps_checkbox);
+        mLocationAccess = findSetupPreference("location");
+        mLocationAgpsAccess = findSetupPreference("location_agps");
         mLocationManager = getSystemService(LocationManager.class);
         mUserManager = getSystemService(UserManager.class);
-        View locationAccessView = findViewById(R.id.location);
-        locationAccessView.setOnClickListener(
-                v -> mLocationAccess.setChecked(!mLocationAccess.isChecked()));
-        View locationAgpsAccessView = findViewById(R.id.location_agps);
-        if (mUserManager.isMainUser()) {
-            locationAgpsAccessView.setOnClickListener(
-                    v -> mLocationAgpsAccess.setChecked(!mLocationAgpsAccess.isChecked()));
-        } else {
-            locationAgpsAccessView.setVisibility(View.GONE);
-        }
+        mLocationAgpsAccess.setVisible(mUserManager.isMainUser());
     }
 
     @Override
@@ -106,8 +96,8 @@ public class LocationSettingsActivity extends BaseSetupWizardActivity {
     private void setSaving(boolean saving) {
         mSaving = saving;
         setNextAllowed(!saving);
-        findViewById(R.id.location).setEnabled(!saving);
-        findViewById(R.id.location_agps).setEnabled(!saving);
+        mLocationAccess.setEnabled(!saving);
+        mLocationAgpsAccess.setEnabled(!saving);
         getGlifLayout().setProgressBarShown(saving);
     }
 
@@ -119,7 +109,12 @@ public class LocationSettingsActivity extends BaseSetupWizardActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.location_settings;
+        return R.layout.setup_preferences;
+    }
+
+    @Override
+    protected int getPreferencesResId() {
+        return R.xml.setup_location;
     }
 
     @Override

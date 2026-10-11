@@ -12,16 +12,13 @@ import static org.lineageos.internal.util.DeviceKeysConstants.KEY_MASK_APP_SWITC
 import static org.lineageos.setupwizard.SetupWizardApp.DISABLE_NAV_KEYS;
 import static org.lineageos.setupwizard.SetupWizardApp.NAVIGATION_OPTION_KEY;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.os.UserHandle;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
-import com.airbnb.lottie.LottieAnimationView;
+import androidx.preference.SwitchPreferenceCompat;
+
+import com.android.settingslib.widget.IllustrationPreference;
+import com.android.settingslib.widget.SelectorWithWidgetPreference;
 
 import lineageos.providers.LineageSettings;
 
@@ -33,7 +30,10 @@ public class NavigationSettingsActivity extends BaseSetupWizardActivity {
 
     private String mSelection = NAV_BAR_MODE_GESTURAL_OVERLAY;
 
-    private CheckBox mHideGesturalHint;
+    private SwitchPreferenceCompat mHideGesturalHint;
+    private SelectorWithWidgetPreference mGesture;
+    private SelectorWithWidgetPreference mThreeButton;
+    private IllustrationPreference mIllustration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,77 +52,49 @@ public class NavigationSettingsActivity extends BaseSetupWizardActivity {
         getGlifLayout().setDescriptionText(getString(R.string.navigation_summary));
         setNextText(R.string.next);
 
-        int available = 3;
-        // Hide unavailable navigation modes
-        if (!SetupWizardUtils.isPackageInstalled(this, NAV_BAR_MODE_GESTURAL_OVERLAY)) {
-            findViewById(R.id.radio_gesture).setVisibility(View.GONE);
-            ((RadioButton) findViewById(R.id.radio_sw_keys)).setChecked(true);
-            available--;
-        }
-
-        if (!SetupWizardUtils.isPackageInstalled(this, NAV_BAR_MODE_3BUTTON_OVERLAY)) {
-            findViewById(R.id.radio_sw_keys).setVisibility(View.GONE);
-            available--;
-        }
+        mGesture = findSetupPreference("gesture");
+        mThreeButton = findSetupPreference("three_button");
+        mHideGesturalHint = findSetupPreference("hide_navigation_hint");
+        mIllustration = findSetupPreference("navigation_illustration");
+        mGesture.setVisible(SetupWizardUtils.isPackageInstalled(
+                this, NAV_BAR_MODE_GESTURAL_OVERLAY));
+        mThreeButton.setVisible(SetupWizardUtils.isPackageInstalled(
+                this, NAV_BAR_MODE_3BUTTON_OVERLAY));
+        int available = (mGesture.isVisible() ? 1 : 0) + (mThreeButton.isVisible() ? 1 : 0);
 
         // Hide this page if the device has hardware keys but didn't enable navbar
         // or if there's <= 1 available navigation modes
-        if (!navBarEnabled && hasHomeKey || available <= 1) {
+        if ((!navBarEnabled && hasHomeKey) || available <= 1) {
             mSetupWizardApp.getSettingsBundle().putString(NAVIGATION_OPTION_KEY,
-                    NAV_BAR_MODE_3BUTTON_OVERLAY);
+                    mGesture.isVisible() && (navBarEnabled || !hasHomeKey)
+                            ? NAV_BAR_MODE_GESTURAL_OVERLAY
+                            : NAV_BAR_MODE_3BUTTON_OVERLAY);
             finishAction(RESULT_OK);
-        }
-
-        final LottieAnimationView navigationIllustration =
-                findViewById(R.id.navigation_illustration);
-        final RadioGroup radioGroup = findViewById(R.id.navigation_radio_group);
-        mHideGesturalHint = findViewById(R.id.hide_navigation_hint);
-
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.radio_gesture) {
-                mSelection = NAV_BAR_MODE_GESTURAL_OVERLAY;
-                navigationIllustration.setAnimation(R.raw.lottie_system_nav_fully_gestural);
-                revealHintCheckbox();
-            } else if (checkedId == R.id.radio_sw_keys) {
-                mSelection = NAV_BAR_MODE_3BUTTON_OVERLAY;
-                navigationIllustration.setAnimation(R.raw.lottie_system_nav_3_button);
-                hideHintCheckBox();
-            }
-
-            navigationIllustration.playAnimation();
-        });
-    }
-
-    private void revealHintCheckbox() {
-        mHideGesturalHint.animate().cancel();
-
-        if (mHideGesturalHint.getVisibility() == View.VISIBLE) {
             return;
         }
 
-        mHideGesturalHint.setVisibility(View.VISIBLE);
-        mHideGesturalHint.setAlpha(0.0f);
-        mHideGesturalHint.animate()
-                .translationY(0)
-                .alpha(1.0f)
-                .setListener(null);
+        mGesture.setOnClickListener(preference -> selectNavigation(NAV_BAR_MODE_GESTURAL_OVERLAY));
+        mThreeButton.setOnClickListener(preference -> selectNavigation(NAV_BAR_MODE_3BUTTON_OVERLAY));
+        selectNavigation(savedInstanceState == null
+                ? mSetupWizardApp.getSettingsBundle().getString(NAVIGATION_OPTION_KEY,
+                        NAV_BAR_MODE_GESTURAL_OVERLAY)
+                : savedInstanceState.getString(NAVIGATION_OPTION_KEY, NAV_BAR_MODE_GESTURAL_OVERLAY));
     }
 
-    private void hideHintCheckBox() {
-        if (mHideGesturalHint.getVisibility() == View.INVISIBLE) {
-            return;
-        }
+    private void selectNavigation(String selection) {
+        mSelection = selection;
+        boolean gesture = NAV_BAR_MODE_GESTURAL_OVERLAY.equals(selection);
+        mGesture.setChecked(gesture);
+        mThreeButton.setChecked(!gesture);
+        mHideGesturalHint.setVisible(gesture);
+        mIllustration.setLottieAnimationResId(gesture
+                ? R.raw.lottie_system_nav_fully_gestural : R.raw.lottie_system_nav_3_button);
+    }
 
-        mHideGesturalHint.animate()
-                .translationY(-mHideGesturalHint.getHeight())
-                .alpha(0.0f)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        mHideGesturalHint.setVisibility(View.INVISIBLE);
-                    }
-                });
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(NAVIGATION_OPTION_KEY, mSelection);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -137,7 +109,12 @@ public class NavigationSettingsActivity extends BaseSetupWizardActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.setup_navigation;
+        return R.layout.setup_preferences;
+    }
+
+    @Override
+    protected int getPreferencesResId() {
+        return R.xml.setup_navigation;
     }
 
     @Override

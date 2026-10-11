@@ -8,9 +8,10 @@ package org.lineageos.setupwizard;
 import android.app.UiModeManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
+
+import com.android.settingslib.widget.SelectorWithWidgetPreference;
 
 public class ThemeSettingsActivity extends BaseSetupWizardActivity {
 
@@ -20,22 +21,32 @@ public class ThemeSettingsActivity extends BaseSetupWizardActivity {
         getGlifLayout().setDescriptionText(getString(R.string.theme_summary));
 
         UiModeManager uiModeManager = getSystemService(UiModeManager.class);
-        final RadioGroup radioGroup = findViewById(R.id.theme_radio_group);
-        radioGroup.check(((getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
-                ? R.id.radio_dark : R.id.radio_light);
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.radio_dark) {
-                uiModeManager.setNightModeActivated(true);
-            } else if (checkedId == R.id.radio_light) {
-                uiModeManager.setNightModeActivated(false);
-            }
+        SelectorWithWidgetPreference light = findSetupPreference("light");
+        SelectorWithWidgetPreference dark = findSetupPreference("dark");
+        boolean night = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        light.setChecked(!night);
+        dark.setChecked(night);
+        light.setOnClickListener(preference -> {
+            light.setChecked(true);
+            dark.setChecked(false);
+            uiModeManager.setNightModeActivated(false);
+        });
+        dark.setOnClickListener(preference -> {
+            light.setChecked(false);
+            dark.setChecked(true);
+            uiModeManager.setNightModeActivated(true);
         });
     }
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.setup_theme;
+        return R.layout.setup_preferences;
+    }
+
+    @Override
+    protected int getPreferencesResId() {
+        return R.xml.setup_theme;
     }
 
     @Override

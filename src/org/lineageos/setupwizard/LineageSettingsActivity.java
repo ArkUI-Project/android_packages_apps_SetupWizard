@@ -14,8 +14,8 @@ import static org.lineageos.setupwizard.SetupWizardApp.DISABLE_NAV_KEYS;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.UserHandle;
-import android.view.View;
-import android.widget.CheckBox;
+
+import androidx.preference.SwitchPreferenceCompat;
 
 import lineageos.hardware.LineageHardwareManager;
 import lineageos.providers.LineageSettings;
@@ -24,15 +24,9 @@ public class LineageSettingsActivity extends BaseSetupWizardActivity {
 
     private SetupWizardApp mSetupWizardApp;
 
-    private CheckBox mNavKeys;
+    private SwitchPreferenceCompat mNavKeys;
 
     private boolean mSupportsKeyDisabler = false;
-
-    private final View.OnClickListener mNavKeysClickListener = view -> {
-        boolean checked = !mNavKeys.isChecked();
-        mNavKeys.setChecked(checked);
-        mSetupWizardApp.getSettingsBundle().putBoolean(DISABLE_NAV_KEYS, checked);
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +40,11 @@ public class LineageSettingsActivity extends BaseSetupWizardActivity {
 
         setNextText(R.string.next);
 
-        View navKeysRow = findViewById(R.id.nav_keys);
-        navKeysRow.setOnClickListener(mNavKeysClickListener);
-        mNavKeys = findViewById(R.id.nav_keys_checkbox);
-        navKeysRow.requestFocus();
+        mNavKeys = findSetupPreference("nav_keys");
+        mNavKeys.setOnPreferenceChangeListener((preference, value) -> {
+            mSetupWizardApp.getSettingsBundle().putBoolean(DISABLE_NAV_KEYS, (boolean) value);
+            return true;
+        });
         mNavKeys.setChecked(LineageSettings.System.getIntForUser(getContentResolver(),
                 LineageSettings.System.FORCE_SHOW_NAVBAR, 0, UserHandle.USER_CURRENT) != 0);
     }
@@ -62,7 +57,12 @@ public class LineageSettingsActivity extends BaseSetupWizardActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.setup_lineage_settings;
+        return R.layout.setup_preferences;
+    }
+
+    @Override
+    protected int getPreferencesResId() {
+        return R.xml.setup_lineage;
     }
 
     @Override

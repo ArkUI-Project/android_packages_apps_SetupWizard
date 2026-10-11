@@ -12,24 +12,24 @@
     android:paddingTop="16dp"
     android:paddingBottom="8dp">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/navbar_skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/skip"
         android:visibility="gone"
-        style="@style/SudGlifButton.Secondary" />
+        style="@style/SettingsLibButtonStyle.Expressive.Tonal.Large" />
 
     <Space
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/navbar_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/next"
-        style="@style/SudGlifButton.Primary" />
+        style="@style/SettingsLibButtonStyle.Expressive.Filled.Large" />
 
 </com.google.android.setupcompat.view.ButtonBarLayout>

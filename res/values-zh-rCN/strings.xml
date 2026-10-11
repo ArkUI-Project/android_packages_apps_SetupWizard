@@ -32,11 +32,13 @@
     <string name="setup_datetime">日期和时间</string>
     <string name="date_time_summary">如果需要，设置时区和调整日期和时间</string>
     <string name="setup_current_date">当前日期</string>
+    <string name="setup_time_zone">时区</string>
     <string name="setup_current_time">当前时间</string>
     <string name="intro_restore_title">恢复应用和数据</string>
     <string name="intro_restore_subtitle">如果你有来自<xliff:g id="name" example="LineageOS">%s</xliff:g>或其他操作系统的Seedvault备份，你可以在这里恢复它。</string>
     <string name="intro_restore_button">从备份中还原</string>
     <string name="setup_location">位置服务</string>
+    <string name="location_agps_title">卫星辅助数据</string>
     <string name="location_access_summary"><b>允许得到您授权的应用</b>使用您的位置信息，可能包括您当前的位置和过去的位置。</string>
     <string name="location_agps_access_summary">当位置信息开启时，<b>将会从互联网下载卫星辅助数据</b>，这将大幅提升 GPS 的启动性能。</string>
     <string name="update_recovery_title">更新 Lineage 恢复</string>

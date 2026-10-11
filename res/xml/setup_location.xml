@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:key="location"
+        android:title="@string/setup_location"
+        android:summary="@string/location_access_summary"
+        android:persistent="false"
+        app:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
+        android:key="location_agps"
+        android:title="@string/location_agps_title"
+        android:summary="@string/location_agps_access_summary"
+        android:defaultValue="true"
+        android:persistent="false"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

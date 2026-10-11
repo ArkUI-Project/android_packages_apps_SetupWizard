@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.android.settingslib.widget.IllustrationPreference
+        android:key="navigation_illustration"
+        android:selectable="false"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false" />
+
+    <com.android.settingslib.widget.SelectorWithWidgetPreference
+        android:key="gesture"
+        android:title="@string/gesture_navigation"
+        android:persistent="false" />
+
+    <com.android.settingslib.widget.SelectorWithWidgetPreference
+        android:key="three_button"
+        android:title="@string/navbar_navigation"
+        android:persistent="false" />
+
+    <SwitchPreferenceCompat
+        android:key="hide_navigation_hint"
+        android:title="@string/hide_gesture_hint"
+        android:persistent="false"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

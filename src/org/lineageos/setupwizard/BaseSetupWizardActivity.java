@@ -31,8 +31,10 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.Preference;
 
 import com.android.settingslib.Utils;
+import com.android.settingslib.widget.ExpressiveDesignEnabledProvider;
 
 import com.google.android.setupcompat.util.WizardManagerHelper;
 import com.google.android.setupdesign.GlifLayout;
@@ -43,12 +45,13 @@ import org.lineageos.setupwizard.NavigationLayout.NavigationBarListener;
 import org.lineageos.setupwizard.util.SetupWizardUtils;
 
 public abstract class BaseSetupWizardActivity extends AppCompatActivity implements
-        NavigationBarListener {
+        NavigationBarListener, ExpressiveDesignEnabledProvider {
 
     public static final String TAG = BaseSetupWizardActivity.class.getSimpleName();
     public static final int DEFAULT_TRANSITION = TransitionHelper.TRANSITION_FADE_THROUGH;
 
     private NavigationLayout mNavigationBar;
+    private SetupPreferencesFragment mPreferences;
 
     private ActivityResultLauncher<Intent> mNextIntentResultLauncher;
 
@@ -315,6 +318,28 @@ public abstract class BaseSetupWizardActivity extends AppCompatActivity implemen
             icon.setTintList(Utils.getColorAccent(layout.getContext()));
             layout.setIcon(icon);
         }
+        if (getPreferencesResId() != 0) {
+            mPreferences = (SetupPreferencesFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.setup_preferences);
+            if (mPreferences == null) {
+                mPreferences = SetupPreferencesFragment.newInstance(getPreferencesResId());
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.setup_preferences, mPreferences).commitNow();
+            }
+        }
+    }
+
+    @Override
+    public boolean isExpressiveDesignEnabled() {
+        return true;
+    }
+
+    protected int getPreferencesResId() {
+        return 0;
+    }
+
+    protected final <T extends Preference> T findSetupPreference(String key) {
+        return java.util.Objects.requireNonNull(mPreferences.findPreference(key));
     }
 
     protected GlifLayout getGlifLayout() {

@@ -18,16 +18,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.format.DateFormat;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.DatePicker;
-import android.widget.SimpleAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 
 import com.android.settingslib.datetime.ZoneGetter;
 
@@ -47,9 +44,9 @@ public class DateTimeActivity extends BaseSetupWizardActivity implements
     private static final String KEY_GMT = "gmt"; // value: String
     private static final String KEY_OFFSET = "offset"; // value: int (Integer)
 
-    private TimeZone mCurrentTimeZone;
-    private TextView mDateTextView;
-    private TextView mTimeTextView;
+    private ListPreference mTimeZone;
+    private Preference mDate;
+    private Preference mTime;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -66,42 +63,24 @@ public class DateTimeActivity extends BaseSetupWizardActivity implements
         setNextText(R.string.next);
         getGlifLayout().setDescriptionText(getString(R.string.date_time_summary));
 
-        final Spinner spinner = findViewById(R.id.timezone_list);
-        final SimpleAdapter adapter = constructTimezoneAdapter(this);
-        mCurrentTimeZone = TimeZone.getDefault();
-        View dateView = findViewById(R.id.date_item);
-        dateView.setOnClickListener((view) -> showDatePicker());
-        View timeView = findViewById(R.id.time_item);
-        timeView.setOnClickListener((view) -> showTimePicker());
-        mDateTextView = findViewById(R.id.date_text);
-        mTimeTextView = findViewById(R.id.time_text);
-        // Pre-select current/default timezone
-        mHandler.post(() -> {
-            int tzIndex = getTimeZoneIndex(adapter, mCurrentTimeZone);
-            spinner.setAdapter(adapter);
-            if (tzIndex != -1) {
-                spinner.setSelection(tzIndex);
+        mTimeZone = findSetupPreference("timezone");
+        mDate = findSetupPreference("date");
+        mTime = findSetupPreference("time");
+        populateTimeZones();
+        mTimeZone.setOnPreferenceChangeListener((preference, value) -> {
+            String zoneId = (String) value;
+            if (!TimeZone.getDefault().getID().equals(zoneId)) {
+                getSystemService(AlarmManager.class).setTimeZone(zoneId);
             }
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position,
-                        long id) {
-                    final Map<?, ?> map = (Map<?, ?>) adapterView.getItemAtPosition(position);
-                    final String tzId = (String) map.get(KEY_ID);
-                    if (mCurrentTimeZone != null && !mCurrentTimeZone.getID().equals(tzId)) {
-                        // Update the system timezone value
-                        final AlarmManager alarm =
-                                (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        alarm.setTimeZone(tzId);
-                        mCurrentTimeZone = TimeZone.getTimeZone(tzId);
-                    }
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
+            return true;
+        });
+        mDate.setOnPreferenceClickListener(preference -> {
+            showDatePicker();
+            return true;
+        });
+        mTime.setOnPreferenceClickListener(preference -> {
+            showTimePicker();
+            return true;
         });
         // Pre-select current/default date if epoch
         mHandler.post(() -> {
@@ -143,7 +122,12 @@ public class DateTimeActivity extends BaseSetupWizardActivity implements
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.setup_datetime_page;
+        return R.layout.setup_preferences;
+    }
+
+    @Override
+    protected int getPreferencesResId() {
+        return R.xml.setup_datetime;
     }
 
     @Override
@@ -181,37 +165,25 @@ public class DateTimeActivity extends BaseSetupWizardActivity implements
     private void updateTimeAndDateDisplay() {
         java.text.DateFormat shortDateFormat = DateFormat.getDateFormat(this);
         final Calendar now = Calendar.getInstance();
-        mTimeTextView.setText(DateFormat.getTimeFormat(this).format(now.getTime()));
-        mDateTextView.setText(shortDateFormat.format(now.getTime()));
+        mTime.setSummary(DateFormat.getTimeFormat(this).format(now.getTime()));
+        mDate.setSummary(shortDateFormat.format(now.getTime()));
+        mTimeZone.setValue(TimeZone.getDefault().getID());
     }
 
-    private static SimpleAdapter constructTimezoneAdapter(Context context) {
-        final String[] from = new String[]{KEY_DISPLAYNAME, KEY_GMT};
-        final int[] to = new int[]{android.R.id.text1, android.R.id.text2};
-
-        final TimeZoneComparator comparator = new TimeZoneComparator(KEY_OFFSET);
-        final List<Map<String, Object>> sortedList = ZoneGetter.getZonesList(context);
-        sortedList.sort(comparator);
-
-        return new SimpleAdapter(context,
-                sortedList,
-                R.layout.date_time_setup_custom_list_item_2,
-                from,
-                to);
-    }
-
-    private static int getTimeZoneIndex(SimpleAdapter adapter, TimeZone tz) {
-        final String defaultId = tz.getID();
-        final int listSize = adapter.getCount();
-        for (int i = 0; i < listSize; i++) {
-            final Map<?, ?> map = (Map<?, ?>) adapter.getItem(i);
-            final String id = (String) map.get(KEY_ID);
-            if (defaultId.equals(id)) {
-                // If current timezone is in this list, move focus to it
-                return i;
-            }
+    private void populateTimeZones() {
+        List<Map<String, Object>> zones = ZoneGetter.getZonesList(this);
+        zones.sort(Comparator.comparingInt(zone -> ((Number) zone.get(KEY_OFFSET)).intValue()));
+        CharSequence[] entries = new CharSequence[zones.size()];
+        CharSequence[] values = new CharSequence[zones.size()];
+        for (int i = 0; i < zones.size(); i++) {
+            Map<String, Object> zone = zones.get(i);
+            entries[i] = zone.get(KEY_DISPLAYNAME) + " (" + zone.get(KEY_GMT) + ")";
+            values[i] = (String) zone.get(KEY_ID);
         }
-        return -1;
+        mTimeZone.setEntries(entries);
+        mTimeZone.setEntryValues(values);
+        mTimeZone.setValue(TimeZone.getDefault().getID());
+        mTimeZone.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
     }
 
     private static void setDate(Context context, int year, int month, int day) {
@@ -238,35 +210,6 @@ public class DateTimeActivity extends BaseSetupWizardActivity implements
 
         if (when / 1000 < Integer.MAX_VALUE) {
             ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).setTime(when);
-        }
-    }
-
-    private static class TimeZoneComparator implements Comparator<Map<?, ?>> {
-        private final String mSortingKey;
-
-        public TimeZoneComparator(String sortingKey) {
-            mSortingKey = sortingKey;
-        }
-
-        public int compare(Map<?, ?> map1, Map<?, ?> map2) {
-            Object value1 = map1.get(mSortingKey);
-            Object value2 = map2.get(mSortingKey);
-
-            /*
-             * This should never happen, but just in-case, put non-comparable
-             * items at the end.
-             */
-            if (!isComparable(value1)) {
-                return isComparable(value2) ? 1 : 0;
-            } else if (!isComparable(value2)) {
-                return -1;
-            }
-
-            return ((Comparable) value1).compareTo(value2);
-        }
-
-        private boolean isComparable(Object value) {
-            return (value instanceof Comparable);
         }
     }
 

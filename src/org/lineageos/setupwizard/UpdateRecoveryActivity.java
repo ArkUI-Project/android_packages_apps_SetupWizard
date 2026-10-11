@@ -13,14 +13,14 @@ import static org.lineageos.setupwizard.SetupWizardApp.UPDATE_RECOVERY_PROP;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
+
+import androidx.preference.SwitchPreferenceCompat;
 
 import org.lineageos.setupwizard.util.SetupWizardUtils;
 
 public class UpdateRecoveryActivity extends BaseSetupWizardActivity {
 
-    private CheckBox mRecoveryUpdateCheckbox;
+    private SwitchPreferenceCompat mRecoveryUpdate;
     private SetupWizardApp mSetupWizardApp;
     private static boolean sFirstTime = true;
 
@@ -39,11 +39,7 @@ public class UpdateRecoveryActivity extends BaseSetupWizardActivity {
         }
 
         setNextText(R.string.next);
-        mRecoveryUpdateCheckbox = findViewById(R.id.update_recovery_checkbox);
-
-        View cbView = findViewById(R.id.update_recovery_checkbox_view);
-        cbView.setOnClickListener(
-                v -> mRecoveryUpdateCheckbox.setChecked(!mRecoveryUpdateCheckbox.isChecked()));
+        mRecoveryUpdate = findSetupPreference("update_recovery");
 
         // Allow overriding the default checkbox state
         if (sFirstTime) {
@@ -60,19 +56,26 @@ public class UpdateRecoveryActivity extends BaseSetupWizardActivity {
 
         final Bundle myPageBundle = mSetupWizardApp.getSettingsBundle();
         final boolean checked = myPageBundle.getBoolean(ENABLE_RECOVERY_UPDATE, false);
-        mRecoveryUpdateCheckbox.setChecked(checked);
+        if (mRecoveryUpdate != null) {
+            mRecoveryUpdate.setChecked(checked);
+        }
     }
 
     @Override
     protected void onNextPressed() {
         mSetupWizardApp.getSettingsBundle().putBoolean(ENABLE_RECOVERY_UPDATE,
-                mRecoveryUpdateCheckbox.isChecked());
+                mRecoveryUpdate.isChecked());
         super.onNextPressed();
     }
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.update_recovery_page;
+        return R.layout.setup_preferences;
+    }
+
+    @Override
+    protected int getPreferencesResId() {
+        return R.xml.setup_recovery;
     }
 
     @Override

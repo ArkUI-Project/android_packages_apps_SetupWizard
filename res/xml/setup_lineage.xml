@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:key="nav_keys"
+        android:title="@string/setup_navigation"
+        android:summary="@string/services_os_nav_keys_label"
+        android:persistent="false"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

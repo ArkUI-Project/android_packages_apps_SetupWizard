@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.android.settingslib.widget.SelectorWithWidgetPreference
+        android:key="light"
+        android:title="@string/light"
+        android:persistent="false" />
+
+    <com.android.settingslib.widget.SelectorWithWidgetPreference
+        android:key="dark"
+        android:title="@string/dark"
+        android:persistent="false" />
+</PreferenceScreen>
