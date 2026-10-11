@@ -6,10 +6,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        android:key="nav_keys"
-        android:title="@string/setup_navigation"
-        android:summary="@string/services_os_nav_keys_label"
-        android:persistent="false"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:key="lineage_group"
+        android:layout="@layout/settingslib_expressive_untitled_preference_category">
+
+        <SwitchPreferenceCompat
+            android:key="nav_keys"
+            android:title="@string/setup_navigation"
+            android:summary="@string/services_os_nav_keys_label"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

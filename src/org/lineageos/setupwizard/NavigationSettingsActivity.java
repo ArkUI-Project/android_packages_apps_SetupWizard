@@ -87,6 +87,7 @@ public class NavigationSettingsActivity extends BaseSetupWizardActivity {
         mGesture.setChecked(gesture);
         mThreeButton.setChecked(!gesture);
         mHideGesturalHint.setVisible(gesture);
+        findSetupPreference("navigation_options").setVisible(gesture);
         mIllustration.setLottieAnimationResId(gesture
                 ? R.raw.lottie_system_nav_fully_gestural : R.raw.lottie_system_nav_3_button);
     }

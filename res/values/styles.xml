@@ -27,12 +27,6 @@
         <item name="sudContentFramePaddingBottom">16dp</item>
         <item name="sudButtonCornerRadius">28dp</item>
         <item name="sucFooterBarButtonMinHeight">56dp</item>
-        <item name="preferenceTheme">@style/PreferenceTheme.SettingsLib.Expressive</item>
-        <item name="expressiveSwitchStyle">@style/SettingslibSwitchStyle.Expressive</item>
-        <item name="android:textAppearanceListItem">@style/TextAppearance.SettingsLib.PreferenceTitle</item>
-        <item name="android:textAppearanceListItemSecondary">@style/TextAppearance.SettingsLib.PreferenceSummary</item>
-        <item name="android:listPreferredItemPaddingStart">@dimen/settingslib_expressive_space_small1</item>
-        <item name="android:listPreferredItemPaddingEnd">@dimen/settingslib_expressive_space_small1</item>
         <item name="alertDialogTheme">@style/Theme.AlertDialog.SettingsLib.Expressive</item>
         <item name="android:alertDialogTheme">@style/Theme.DeviceDefault.AlertDialog.SettingsLib.Expressive</item>
     </style>

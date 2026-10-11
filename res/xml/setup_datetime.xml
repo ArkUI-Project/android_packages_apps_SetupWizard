@@ -6,19 +6,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
-        android:key="timezone"
-        android:title="@string/setup_time_zone"
-        android:persistent="false"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:key="datetime_group"
+        android:layout="@layout/settingslib_expressive_untitled_preference_category">
 
-    <Preference
-        android:key="date"
-        android:title="@string/setup_current_date"
-        app:iconSpaceReserved="false" />
+        <ListPreference
+            android:key="timezone"
+            android:title="@string/setup_time_zone"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
 
-    <Preference
-        android:key="time"
-        android:title="@string/setup_current_time"
-        app:iconSpaceReserved="false" />
+        <Preference
+            android:key="date"
+            android:title="@string/setup_current_date"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="time"
+            android:title="@string/setup_current_time"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

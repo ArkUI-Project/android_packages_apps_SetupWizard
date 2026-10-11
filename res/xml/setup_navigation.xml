@@ -12,19 +12,29 @@
         app:allowDividerAbove="false"
         app:allowDividerBelow="false" />
 
-    <com.android.settingslib.widget.SelectorWithWidgetPreference
-        android:key="gesture"
-        android:title="@string/gesture_navigation"
-        android:persistent="false" />
+    <PreferenceCategory
+        android:key="navigation_modes"
+        android:layout="@layout/settingslib_expressive_untitled_preference_category">
 
-    <com.android.settingslib.widget.SelectorWithWidgetPreference
-        android:key="three_button"
-        android:title="@string/navbar_navigation"
-        android:persistent="false" />
+        <com.android.settingslib.widget.SelectorWithWidgetPreference
+            android:key="gesture"
+            android:title="@string/gesture_navigation"
+            android:persistent="false" />
 
-    <SwitchPreferenceCompat
-        android:key="hide_navigation_hint"
-        android:title="@string/hide_gesture_hint"
-        android:persistent="false"
-        app:iconSpaceReserved="false" />
+        <com.android.settingslib.widget.SelectorWithWidgetPreference
+            android:key="three_button"
+            android:title="@string/navbar_navigation"
+            android:persistent="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="navigation_options"
+        android:layout="@layout/settingslib_expressive_untitled_preference_category">
+
+        <SwitchPreferenceCompat
+            android:key="hide_navigation_hint"
+            android:title="@string/hide_gesture_hint"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

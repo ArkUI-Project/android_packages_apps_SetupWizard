@@ -6,10 +6,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        android:key="update_recovery"
-        android:title="@string/update_recovery_title"
-        android:summary="@string/update_recovery_setting"
-        android:persistent="false"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:key="recovery_group"
+        android:layout="@layout/settingslib_expressive_untitled_preference_category">
+
+        <SwitchPreferenceCompat
+            android:key="update_recovery"
+            android:title="@string/update_recovery_title"
+            android:summary="@string/update_recovery_setting"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

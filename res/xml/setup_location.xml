@@ -6,18 +6,23 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        android:key="location"
-        android:title="@string/setup_location"
-        android:summary="@string/location_access_summary"
-        android:persistent="false"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:key="location_group"
+        android:layout="@layout/settingslib_expressive_untitled_preference_category">
 
-    <SwitchPreferenceCompat
-        android:key="location_agps"
-        android:title="@string/location_agps_title"
-        android:summary="@string/location_agps_access_summary"
-        android:defaultValue="true"
-        android:persistent="false"
-        app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="location"
+            android:title="@string/setup_location"
+            android:summary="@string/location_access_summary"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="location_agps"
+            android:title="@string/location_agps_title"
+            android:summary="@string/location_agps_access_summary"
+            android:defaultValue="true"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>
