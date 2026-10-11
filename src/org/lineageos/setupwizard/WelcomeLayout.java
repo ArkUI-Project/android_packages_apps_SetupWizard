@@ -77,6 +77,7 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         mNext.setText(R.string.start);
         mNext.setTextSize(16);
         mNext.setAllCaps(false);
+        mNext.setGravity(Gravity.CENTER);
         mNext.setMinWidth(0);
         mNext.setMinimumWidth(0);
         mNext.setMinHeight(dp(56));
