@@ -140,7 +140,7 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
         if (!mMotionEnabled) mElapsed = Math.max(MAIN_START, mElapsed);
         render();
         if (mResumed && mMotionEnabled && isAttachedToWindow()
-                && getWindowVisibility() == VISIBLE) {
+                && getWindowVisibility() == VISIBLE && hasWindowFocus()) {
             mRunning = true;
             Choreographer.getInstance().postFrameCallback(this);
         }
@@ -202,6 +202,12 @@ public final class WelcomeLayout extends ViewGroup implements Choreographer.Fram
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         // View construction may deliver this before the scene's children exist.
+        if (mArt != null) updateAnimationState();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
         if (mArt != null) updateAnimationState();
     }
 

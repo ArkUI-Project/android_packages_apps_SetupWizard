@@ -3,7 +3,7 @@
      SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<com.google.android.setupdesign.GlifLayout
+<org.lineageos.setupwizard.ArkuiSetupLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/setup_wizard_layout"
     android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        style="@style/SudContentFrame">
+        style="@style/ArkuiSetupPreferenceFrame">
 
         <FrameLayout
             android:id="@+id/setup_preferences"
@@ -24,7 +24,9 @@
         <org.lineageos.setupwizard.NavigationLayout
             android:id="@+id/navigation_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/settingslib_expressive_space_small1"
+            android:paddingEnd="@dimen/settingslib_expressive_space_small1" />
 
     </LinearLayout>
-</com.google.android.setupdesign.GlifLayout>
+</org.lineageos.setupwizard.ArkuiSetupLayout>

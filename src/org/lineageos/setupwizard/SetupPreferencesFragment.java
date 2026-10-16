@@ -6,6 +6,7 @@
 package org.lineageos.setupwizard;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -65,6 +66,10 @@ public class SetupPreferencesFragment extends SettingsBasePreferenceFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getListView().setClipToPadding(false);
+        view.setBackgroundColor(Color.TRANSPARENT);
+        RecyclerView list = getListView();
+        list.setBackgroundColor(Color.TRANSPARENT);
+        list.setPaddingRelative(0, list.getPaddingTop(), 0, list.getPaddingBottom());
+        list.setClipToPadding(false);
     }
 }

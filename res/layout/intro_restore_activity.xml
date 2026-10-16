@@ -2,9 +2,10 @@
 <!--
      SPDX-FileCopyrightText: 2015 The CyanogenMod Project
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<com.google.android.setupdesign.GlifLayout
+<org.lineageos.setupwizard.ArkuiSetupLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/setup_wizard_layout"
@@ -15,7 +16,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/SudContentFrame">
+        style="@style/ArkuiSetupContentFrame">
 
         <View
             android:id="@+id/page"
@@ -30,4 +31,4 @@
             app:showSkipButton="true" />
 
     </LinearLayout>
-</com.google.android.setupdesign.GlifLayout>
+</org.lineageos.setupwizard.ArkuiSetupLayout>

@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2016 The CyanogenMod Project
  * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ArkUI Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,6 +19,7 @@ import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -38,20 +40,21 @@ import com.android.settingslib.widget.ExpressiveDesignEnabledProvider;
 
 import com.google.android.setupcompat.util.WizardManagerHelper;
 import com.google.android.setupdesign.GlifLayout;
-import com.google.android.setupdesign.transition.TransitionHelper;
 import com.google.android.setupdesign.util.ThemeHelper;
 
 import org.lineageos.setupwizard.NavigationLayout.NavigationBarListener;
 import org.lineageos.setupwizard.util.SetupWizardUtils;
 
+import org.arkui.animation.ScreenWakeAnimation;
+
 public abstract class BaseSetupWizardActivity extends AppCompatActivity implements
         NavigationBarListener, ExpressiveDesignEnabledProvider {
 
     public static final String TAG = BaseSetupWizardActivity.class.getSimpleName();
-    public static final int DEFAULT_TRANSITION = TransitionHelper.TRANSITION_FADE_THROUGH;
 
     private NavigationLayout mNavigationBar;
     private SetupPreferencesFragment mPreferences;
+    private boolean mNavigating;
 
     private ActivityResultLauncher<Intent> mNextIntentResultLauncher;
 
@@ -104,6 +107,7 @@ public abstract class BaseSetupWizardActivity extends AppCompatActivity implemen
             logActivityState("onResume");
         }
         super.onResume();
+        mNavigating = false;
     }
 
     @Override
@@ -258,9 +262,17 @@ public abstract class BaseSetupWizardActivity extends AppCompatActivity implemen
         if (resultCode == RESULT_CANCELED) {
             throw new IllegalArgumentException("Cannot call nextAction with RESULT_CANCELED");
         }
+        if (mNavigating) return;
+        mNavigating = true;
         setResult(resultCode, data);
         Intent intent = WizardManagerHelper.getNextIntent(getIntent(), resultCode, data);
-        mNextIntentResultLauncher.launch(intent);
+        applyForwardTransition();
+        try {
+            mNextIntentResultLauncher.launch(intent);
+        } catch (RuntimeException e) {
+            mNavigating = false;
+            throw e;
+        }
     }
 
     /** Adorn the Intent with Setup Wizard-related extras. */
@@ -277,6 +289,7 @@ public abstract class BaseSetupWizardActivity extends AppCompatActivity implemen
     }
 
     protected void onNextIntentResult(@NonNull ActivityResult activityResult) {
+        mNavigating = false;
         int resultCode = activityResult.getResultCode();
         Intent data = activityResult.getData();
         if (LOGV) {
@@ -359,12 +372,30 @@ public abstract class BaseSetupWizardActivity extends AppCompatActivity implemen
     }
 
     protected void applyForwardTransition() {
-        TransitionHelper.applyForwardTransition(this, DEFAULT_TRANSITION, true);
+        boolean motion = ScreenWakeAnimation.isMotionEnabled(this);
+        boolean rtl = getResources().getConfiguration().getLayoutDirection()
+                == View.LAYOUT_DIRECTION_RTL;
+        overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,
+                motion ? (rtl ? R.anim.setup_backward_enter : R.anim.setup_forward_enter) : 0,
+                motion ? (rtl ? R.anim.setup_backward_exit : R.anim.setup_forward_exit) : 0,
+                getTransitionBackgroundColor());
+        applyBackwardTransition();
     }
 
     protected void applyBackwardTransition() {
-        TransitionHelper.applyBackwardTransition(BaseSetupWizardActivity.this,
-                DEFAULT_TRANSITION, true);
+        boolean motion = ScreenWakeAnimation.isMotionEnabled(this);
+        boolean rtl = getResources().getConfiguration().getLayoutDirection()
+                == View.LAYOUT_DIRECTION_RTL;
+        overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,
+                motion ? (rtl ? R.anim.setup_forward_enter : R.anim.setup_backward_enter) : 0,
+                motion ? (rtl ? R.anim.setup_forward_exit : R.anim.setup_backward_exit) : 0,
+                getTransitionBackgroundColor());
+    }
+
+    private int getTransitionBackgroundColor() {
+        Drawable background = getWindow().getDecorView().getBackground();
+        return background instanceof ColorDrawable color ? color.getColor()
+                : getColor(com.android.internal.R.color.materialColorSurface);
     }
 
     protected final class StartDecoratedActivityForResult

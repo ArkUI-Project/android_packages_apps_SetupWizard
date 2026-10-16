@@ -7,28 +7,47 @@
 -->
 <resources xmlns:androidprv="http://schemas.android.com/apk/prv/res/android">
     <style name="Theme.Setup" parent="@style/SudThemeGlifExpressive.DayNight">
-        <item name="sucUsePartnerResource">true</item>
-        <item name="sudUsePartnerHeavyTheme">true</item>
-        <item name="sucFullDynamicColor">true</item>
+        <item name="sucUsePartnerResource">false</item>
+        <item name="sudUsePartnerHeavyTheme">false</item>
+        <item name="sucFullDynamicColor">false</item>
         <item name="colorAccent">@androidprv:color/materialColorPrimary</item>
         <item name="android:colorAccent">?attr/colorAccent</item>
-        <item name="android:windowBackground">@color/settingslib_materialColorSurfaceContainer</item>
-        <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
-        <item name="android:navigationBarColor">@color/settingslib_materialColorSurfaceContainer</item>
+        <item name="android:windowBackground">@color/arkui_setup_background</item>
+        <item name="android:colorBackground">@color/arkui_setup_background</item>
+        <item name="android:navigationBarColor">@color/arkui_setup_background</item>
+        <item name="colorSurface">@color/arkui_setup_surface</item>
+        <item name="colorSurfaceBright">@color/arkui_setup_surface</item>
+        <item name="colorSurfaceContainer">@color/arkui_setup_background</item>
         <item name="android:textColorPrimary">@androidprv:color/materialColorOnSurface</item>
         <item name="android:textColorSecondary">@androidprv:color/materialColorOnSurfaceVariant</item>
-        <item name="sudBackgroundBaseColor">@color/settingslib_materialColorSurfaceContainer</item>
+        <item name="sudBackgroundBaseColor">@color/arkui_setup_background</item>
         <item name="sudBackgroundPatterned">false</item>
         <item name="sudGlifHeaderTitleStyle">@style/ArkuiSetupTitle</item>
         <item name="sudGlifDescriptionStyle">@style/ArkuiSetupDescription</item>
-        <item name="sudMarginStart">24dp</item>
-        <item name="sudMarginEnd">24dp</item>
+        <item name="sudMarginStart">@dimen/settingslib_expressive_space_small4</item>
+        <item name="sudMarginEnd">@dimen/settingslib_expressive_space_small4</item>
         <item name="sudContentFramePaddingTop">16dp</item>
         <item name="sudContentFramePaddingBottom">16dp</item>
         <item name="sudButtonCornerRadius">28dp</item>
         <item name="sucFooterBarButtonMinHeight">56dp</item>
         <item name="alertDialogTheme">@style/Theme.AlertDialog.SettingsLib.Expressive</item>
         <item name="android:alertDialogTheme">@style/Theme.DeviceDefault.AlertDialog.SettingsLib.Expressive</item>
+    </style>
+
+    <!-- Headers use 24dp; card content uses one 16dp inset, like Settings. -->
+    <style name="ArkuiSetupContentFrame" parent="SudContentFrame">
+        <item name="android:paddingLeft">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:paddingRight">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:paddingStart">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:paddingEnd">@dimen/settingslib_expressive_space_small1</item>
+    </style>
+
+    <!-- SettingsPreferenceGroupAdapter already provides the card's horizontal inset. -->
+    <style name="ArkuiSetupPreferenceFrame" parent="ArkuiSetupContentFrame">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <style name="Theme.Setup.Welcome" parent="Theme.Setup">

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    SPDX-FileCopyrightText: 2026 The ArkUI Project
+    SPDX-License-Identifier: Apache-2.0
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="-3%p"
+        android:duration="280"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    <alpha
+        android:fromAlpha="1"
+        android:toAlpha="0"
+        android:duration="160"
+        android:interpolator="@android:interpolator/fast_out_linear_in" />
+</set>

@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2013 The CyanogenMod Project
  * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ArkUI Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -16,6 +17,8 @@ import android.provider.Settings;
 import android.util.Log;
 
 import org.lineageos.setupwizard.util.SetupWizardUtils;
+
+import org.arkui.animation.ScreenWakeAnimation;
 
 public class SetupWizardApp extends Application {
 
@@ -60,6 +63,9 @@ public class SetupWizardApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ScreenWakeAnimation.register(this, activity ->
+                activity instanceof BaseSetupWizardActivity setup
+                        && setup.getLayoutResId() != -1);
         if (LOGV) {
             Log.v(TAG, "onCreate()");
         }

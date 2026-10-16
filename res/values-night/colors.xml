@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
      SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: 2026 The ArkUI Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
+    <color name="arkui_setup_background">#1F1F1F</color>
+    <color name="arkui_setup_surface">#393939</color>
+
     <color name="divider">#40ffffff</color>
 </resources>
