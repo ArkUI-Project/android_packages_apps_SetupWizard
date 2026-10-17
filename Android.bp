@@ -25,7 +25,8 @@ android_app {
     system_ext_specific: true,
     platform_apis: true,
 
-    overrides: ["Provision"],
+    // Keep ArkUI in charge of first boot when a GMS product also includes Google's wizard.
+    overrides: ["Provision", "SetupWizard"],
 
     optimize: {
         proguard_flags_files: ["proguard.flags"],

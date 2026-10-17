@@ -72,7 +72,11 @@ public class SetupWizardApp extends Application {
         sStatusBarManager = SetupWizardUtils.disableStatusBar(this);
         mHandler.postDelayed(mRadioTimeoutRunnable, SetupWizardApp.RADIO_READY_TIMEOUT);
         if (SetupWizardUtils.hasGMS(this)) {
-            SetupWizardUtils.disableHome(this);
+            // Only TV delegates first boot to Google's wizard. Phones keep ArkUI's full flow
+            // even if a Google wizard is present from an external GApps installation.
+            if (SetupWizardUtils.hasLeanback(this)) {
+                SetupWizardUtils.disableHome(this);
+            }
             if (SetupWizardUtils.isOwner()) {
                 Settings.Global.putInt(getContentResolver(),
                         Settings.Global.ASSISTED_GPS_ENABLED, 1);
